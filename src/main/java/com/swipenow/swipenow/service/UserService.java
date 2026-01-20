@@ -1,0 +1,111 @@
+package com.swipenow.swipenow.service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import com.swipenow.swipenow.entity.Friends;
+import com.swipenow.swipenow.entity.User;
+import com.swipenow.swipenow.repository.UserRepo;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+  @Autowired
+  UserRepo userRepo;
+
+    public User registerUser(User user) {
+       return userRepo.save(user);
+    }
+
+    public User loginUser(User user) {
+        User existingUser = userRepo.getByEmail(user.getEmail());
+
+        if (existingUser == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+
+        if (!existingUser.getPassword().equals(user.getPassword())) {
+            throw new RuntimeException("Invalid password"); // you can make a custom exception
+        }
+
+        return existingUser;
+    }
+
+
+    public User getUser(String username) {
+        User usersExist=userRepo.findByUsername(username);
+        if(usersExist==null){
+            throw new RuntimeException("Username Does Not Exist");
+        }
+        return usersExist;
+    }
+
+    public User updateUser(User incoming) {
+
+        User existing = userRepo.findByUsername(incoming.getUsername());
+
+        if (existing == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        // =========================
+        // NULL SAFETY
+        // =========================
+        int existingSwipes = existing.getSwipes() == null ? 0 : existing.getSwipes();
+        int existingScore  = existing.getScore()  == null ? 0 : existing.getScore();
+        Integer existingStreakObj = existing.getStreak();
+
+        int incomingSwipes = incoming.getSwipes() == null ? 0 : incoming.getSwipes();
+        int incomingStreak = incoming.getStreak() == null ? 0 : incoming.getStreak();
+        int incomingScore  = incoming.getScore()  == null ? 0 : incoming.getScore();
+
+        // =========================
+        // SWIPES
+        // =========================
+        existing.setSwipes(existingSwipes + incomingSwipes);
+
+        // =========================
+        // STREAK (SERVER-TRUSTED)
+        // =========================
+        LocalDate today = LocalDate.now();
+        LocalDate lastIncrement = existing.getLastStreakDate();
+
+        boolean alreadyIncrementedToday =
+                lastIncrement != null && lastIncrement.isEqual(today);
+
+        if (incomingStreak > 0 && !alreadyIncrementedToday) {
+
+            if (existingStreakObj == null || existingStreakObj == 0) {
+                existing.setStreak(1);
+            } else {
+                existing.setStreak(existingStreakObj + 1); // ALWAYS +1 (ignore frontend value)
+            }
+
+            existing.setLastStreakDate(today);
+        }
+        // else: do nothing (frontend cannot force increment)
+
+        // =========================
+        // SCORE
+        // =========================
+        existing.setScore(existingScore + incomingScore);
+
+        return userRepo.save(existing);
+    }
+
+
+    public List<User> getAllUser() {
+        List<User> allUser=userRepo.findAll();
+        if(allUser.size()==0) {
+            throw new UsernameNotFoundException("Users not found");
+        }
+        return allUser;
+    }
+
+
+
+}
+
