@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 @Entity
 @Table(
         name = "USERS",
@@ -52,9 +52,18 @@ public class User {
 
     private Integer rank;
     private Integer friends;
-    private Integer memes;
+
+
+    private Integer memes = 0;
+
 
 
     private LocalDate lastStreakDate;
+
+
+
+    private LocalDateTime lastSwipeAt;   // for 20-hour inactivity
+    private String fcmToken;
+    private LocalDate lastQuotaReset;// for push notifications
 
 }

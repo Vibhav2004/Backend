@@ -22,8 +22,31 @@ public class config {  // class name capitalized by convention
                 .csrf(csrf -> csrf.disable()) // disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                 "/Register-User","/view_friends/**"
-                                ,"/All-User", "/update","/Login-User","/profile/{username}","/add-friends","/friends/check"
+                                 "/Register-User",
+                                "/view_friends/**",
+                                "/All-User",
+                                "/update",
+                                "/Login-User",
+                                "/profile/**",
+                                "/add-friends",
+                                "/friends/check",
+                                "/profile-pic",
+                                "/Get-profile-pic",
+                                "/send",
+                                "/verify",
+                                "/update-password",
+                                "/update-username",
+                                "/update-email",
+                                "/swipe",
+                                "/fcm-token",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs/swagger-config",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/upload",
+                                "/urls/**",
+                                "/allMEMEs"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -35,7 +58,8 @@ public class config {  // class name capitalized by convention
                                                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                                                 "font-src 'self' https://fonts.gstatic.com; " +
                                                 "img-src 'self' data: https:; " +
-                                                "connect-src 'self' http://localhost:4321"
+                                                "connect-src 'self'http://localhost:8081 http://localhost:4321 http://192.168.29.171:8081"
+
                                 )
                         )
                 )
