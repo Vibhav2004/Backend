@@ -21,7 +21,7 @@ public class Meme {
 
         @Id
         @GeneratedValue(strategy = GenerationType.UUID)
-        private UUID memeId;
+        private Long memeId;
 
         @Column(nullable = false)
         private String title;
