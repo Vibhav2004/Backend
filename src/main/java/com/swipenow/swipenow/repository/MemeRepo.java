@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.UUID;
 
-public interface MemeRepo extends JpaRepository<Meme, UUID> {
+public interface MemeRepo extends JpaRepository<Meme, Long> {
     @Query("SELECT m.url FROM Meme m WHERE m.postedBy = :postedBy")
     List<String> findMemeUrlsByPostedBy(@Param("postedBy") String postedBy);
 
